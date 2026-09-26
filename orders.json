@@ -41,6 +41,20 @@
       "metode": "Transfer Bank",
       "status": "lunas",
       "catatan": ""
+    },
+    {
+      "id_order": "TRX-20260926-0017-G8F7",
+      "tanggal": "2026-09-26T09:57:49.670Z",
+      "toko": "AZKA TOP UP",
+      "pelanggan": "Aka",
+      "id_game": "Aka",
+      "layanan": "Aka",
+      "jumlah": "1",
+      "harga": "50000",
+      "total": "50000",
+      "metode": "Transfer Bank",
+      "status": "lunas",
+      "catatan": ""
     }
   ]
 }
