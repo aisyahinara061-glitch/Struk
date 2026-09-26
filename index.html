@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Struk Order</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Courier New',monospace}
+body{background:#1a0505;padding:20px;min-height:100vh;display:flex;justify-content:center;align-items:flex-start}
+.wrap{max-width:420px;width:100%}
+.form-box{background:#2a0808;border:3px solid #dc2626;border-radius:16px;padding:20px;margin-bottom:20px;box-shadow:5px 5px 0 #dc2626}
+.form-box h2{color:#dc2626;font-size:16px;margin-bottom:14px;text-transform:uppercase;letter-spacing:1px}
+label{display:block;color:#fca5a5;font-size:11px;font-weight:700;margin:10px 0 4px;text-transform:uppercase}
+input,select,textarea{width:100%;padding:10px;background:#1a0505;border:2px solid #dc2626;border-radius:8px;color:#fff;font-size:13px;font-family:inherit;outline:none}
+input:focus,select:focus,textarea:focus{border-color:#fff}
+input[readonly]{background:#0a0202;color:#fbbf24;cursor:not-allowed;font-weight:900;text-align:center;letter-spacing:1px}
+button{width:100%;padding:12px;background:#dc2626;color:#fff;border:3px solid #fff;border-radius:10px;font-size:14px;font-weight:800;cursor:pointer;margin-top:14px;text-transform:uppercase;box-shadow:3px 3px 0 #fff;font-family:inherit}
+button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #fff}
+.btn-reset{background:#7f1d1d;padding:8px;font-size:11px;margin-top:6px}
+.btn-print{background:#2563eb}
+.btn-save{background:#16a34a}
+.auto-info{font-size:10px;color:#fbbf24;text-align:center;margin-top:4px;font-style:italic}
+.msg{padding:10px;border-radius:8px;font-size:12px;font-weight:700;margin-top:10px;display:none}
+.msg.ok{background:#16a34a;color:#fff;border:2px solid #fff;display:block}
+.msg.err{background:#7f1d1d;color:#fff;border:2px solid #dc2626;display:block}
+
+/* STRUK */
+#struk{background:#fff;color:#000;padding:24px 20px;border-radius:8px;display:none;font-size:12px;line-height:1.6;position:relative}
+#struk.show{display:block}
+.struk-head{text-align:center;border-bottom:2px dashed #000;padding-bottom:12px;margin-bottom:12px}
+.struk-head h1{font-size:18px;font-weight:900;letter-spacing:2px;margin-bottom:4px}
+.struk-head p{font-size:10px;color:#555}
+.struk-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12px}
+.struk-row .lbl{color:#666}
+.struk-row .val{font-weight:700;text-align:right;max-width:60%;word-break:break-word}
+.struk-divider{border-top:1px dashed #000;margin:10px 0}
+.struk-total{display:flex;justify-content:space-between;font-size:15px;font-weight:900;padding:8px 0;border-top:2px solid #000;border-bottom:2px solid #000;margin:8px 0}
+.struk-foot{text-align:center;font-size:10px;color:#555;margin-top:14px;padding-top:12px;border-top:2px dashed #000}
+.struk-foot b{color:#000}
+.badge-status{display:inline-block;padding:4px 12px;border:2px solid #000;border-radius:20px;font-size:10px;font-weight:900}
+.status-lunas{background:#16a34a;color:#fff;border-color:#16a34a}
+.status-pending{background:#fbbf24;color:#000;border-color:#000}
+.status-batal{background:#dc2626;color:#fff;border-color:#dc2626}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="form-box">
+    <h2>📝 Buat Struk</h2>
+    
+    <label>GitHub Token (ghp_...)</label>
+    <input type="text" id="ghToken" placeholder="ghp_xxxxxxxxxxxx">
+    
+    <label>Repo (username/nama-repo)</label>
+    <input type="text" id="ghRepo" placeholder="aisyahinara061-glitch/panel-gh">
+    
+    <label>Nama Toko</label>
+    <input type="text" id="toko" value="AZKA TOP UP">
+    
+    <label>ID Order (Auto)</label>
+    <input type="text" id="idOrder" readonly>
+    <button class="btn-reset" onclick="generateID()">🔄 Generate ID Baru</button>
+    
+    <label>Nama Pelanggan</label>
+    <input type="text" id="pelanggan" placeholder="Budi">
+    
+    <label>ID Game BUSSID</label>
+    <input type="text" id="idGame" placeholder="12345678">
+    
+    <label>Layanan</label>
+    <input type="text" id="layanan" placeholder="Joki 1 Juta RP">
+    
+    <label>Jumlah</label>
+    <input type="number" id="jumlah" value="1" oninput="hitungTotal()">
+    
+    <label>Harga Satuan (Rp)</label>
+    <input type="number" id="harga" placeholder="50000" oninput="hitungTotal()">
+    
+    <label>Total (Rp)</label>
+    <input type="number" id="total" readonly>
+    
+    <label>Metode Bayar</label>
+    <select id="metode">
+      <option>Transfer Bank</option>
+      <option>DANA</option>
+      <option>OVO</option>
+      <option>GoPay</option>
+      <option>ShopeePay</option>
+      <option>QRIS</option>
+      <option>Pulsa</option>
+    </select>
+    
+    <label>Status</label>
+    <select id="status">
+      <option value="lunas">Lunas</option>
+      <option value="pending">Pending</option>
+      <option value="batal">Batal</option>
+    </select>
+    
+    <label>Catatan</label>
+    <textarea id="catatan" rows="2" placeholder="Proses 1x24 jam"></textarea>
+    
+    <button onclick="buatStruk()">🧾 Buat Struk</button>
+    <button class="btn-save" onclick="simpanKeGitHub()">💾 Simpan ke GitHub</button>
+    <button class="btn-print" onclick="window.print()">🖨️ Print / PDF</button>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <div id="struk"></div>
+
+</div>
+
+<script>
+// ===== GENERATE ID =====
+function generateID(){
+  var prefix = "TRX";
+  var now = new Date();
+  var tanggal = now.getFullYear().toString() +
+                String(now.getMonth()+1).padStart(2,'0') +
+                String(now.getDate()).padStart(2,'0');
+  var random = '';
+  var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  for(var i=0; i<4; i++){
+    random += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  var counter = localStorage.getItem('order_counter') || 1;
+  counter = parseInt(counter);
+  var nomorUrut = String(counter).padStart(4, '0');
+  
+  var id = prefix + '-' + tanggal + '-' + nomorUrut + '-' + random;
+  document.getElementById('idOrder').value = id;
+  localStorage.setItem('order_counter', counter + 1);
+}
+
+function hitungTotal(){
+  var h = parseInt(document.getElementById('harga').value) || 0;
+  var j = parseInt(document.getElementById('jumlah').value) || 1;
+  document.getElementById('total').value = h * j;
+}
+
+function formatRp(n){
+  return 'Rp ' + (parseInt(n) || 0).toLocaleString('id-ID');
+}
+
+function showMsg(id, text, type){
+  var el = document.getElementById(id);
+  el.className = 'msg ' + type;
+  el.innerText = text;
+  if(type === 'ok') setTimeout(function(){ el.className = 'msg'; }, 5000);
+}
+
+// ===== AMBIL DATA FORM =====
+function getData(){
+  return {
+    id_order: document.getElementById('idOrder').value,
+    tanggal: new Date().toISOString(),
+    toko: document.getElementById('toko').value,
+    pelanggan: document.getElementById('pelanggan').value,
+    id_game: document.getElementById('idGame').value,
+    layanan: document.getElementById('layanan').value,
+    jumlah: document.getElementById('jumlah').value,
+    harga: document.getElementById('harga').value,
+    total: document.getElementById('total').value,
+    metode: document.getElementById('metode').value,
+    status: document.getElementById('status').value,
+    catatan: document.getElementById('catatan').value
+  };
+}
+
+// ===== BUAT STRUK =====
+function buatStruk(){
+  var d = getData();
+  if(!d.pelanggan){ alert('Isi nama pelanggan!'); return; }
+  if(!d.layanan){ alert('Isi layanan!'); return; }
+  
+  var tgl = new Date().toLocaleString('id-ID', {
+    day:'2-digit', month:'2-digit', year:'numeric',
+    hour:'2-digit', minute:'2-digit'
+  });
+  
+  var h = '';
+  h += '<div class="struk-head"><h1>' + d.toko + '</h1><p>Struk Pembayaran Resmi</p></div>';
+  h += '<div class="struk-row"><span class="lbl">No. Order</span><span class="val">' + d.id_order + '</span></div>';
+  h += '<div class="struk-row"><span class="lbl">Tanggal</span><span class="val">' + tgl + '</span></div>';
+  h += '<div class="struk-row"><span class="lbl">Pelanggan</span><span class="val">' + d.pelanggan + '</span></div>';
+  h += '<div class="struk-row"><span class="lbl">ID Game</span><span class="val">' + d.id_game + '</span></div>';
+  h += '<div class="struk-divider"></div>';
+  h += '<div class="struk-row"><span class="lbl">Layanan</span><span class="val">' + d.layanan + '</span></div>';
+  h += '<div class="struk-row"><span class="lbl">Jumlah</span><span class="val">' + d.jumlah + 'x</span></div>';
+  h += '<div class="struk-row"><span class="lbl">Harga</span><span class="val">' + formatRp(d.harga) + '</span></div>';
+  h += '<div class="struk-total"><span>TOTAL</span><span>' + formatRp(d.total) + '</span></div>';
+  h += '<div class="struk-row"><span class="lbl">Metode</span><span class="val">' + d.metode + '</span></div>';
+  h += '<div class="struk-row"><span class="lbl">Status</span><span class="val"><span class="badge-status status-' + d.status + '">' + d.status.toUpperCase() + '</span></span></div>';
+  if(d.catatan) h += '<div class="struk-divider"></div><div style="font-size:11px;font-style:italic;color:#555">Catatan: ' + d.catatan + '</div>';
+  h += '<div class="struk-foot"><b>TERIMA KASIH 🙏</b><br>Simpan struk ini sebagai bukti<br>Barang tidak dapat dikembalikan</div>';
+  
+  document.getElementById('struk').innerHTML = h;
+  document.getElementById('struk').classList.add('show');
+  document.getElementById('struk').scrollIntoView({behavior:'smooth'});
+}
+
+// ===== SIMPAN KE GITHUB =====
+async function simpanKeGitHub(){
+  var d = getData();
+  var token = document.getElementById('ghToken').value.trim();
+  var repo = document.getElementById('ghRepo').value.trim();
+  
+  if(!token || !repo){ return showMsg('msg','❌ Isi Token & Repo dulu!','err'); }
+  if(!d.pelanggan){ return showMsg('msg','❌ Isi nama pelanggan!','err'); }
+  if(!d.layanan){ return showMsg('msg','❌ Isi layanan!','err'); }
+  
+  var url = 'https://api.github.com/repos/' + repo + '/contents/orders.json';
+  var headers = {
+    'Authorization': 'token ' + token,
+    'Accept': 'application/vnd.github.v3+json'
+  };
+  
+  showMsg('msg','⏳ Mengambil data...','ok');
+  
+  try{
+    // Ambil data lama
+    var r = await fetch(url, { headers: headers });
+    var data, sha;
+    if(r.ok){
+      var j = await r.json();
+      var content = decodeURIComponent(escape(atob(j.content.replace(/\n/g,''))));
+      data = JSON.parse(content);
+      sha = j.sha;
+    } else {
+      data = { orders: [] };
+      sha = null;
+    }
+    
+    // Tambah order baru
+    data.orders.push(d);
+    
+    // Upload balik
+    var body = {
+      message: 'Order ' + d.id_order + ' - ' + d.pelanggan,
+      content: btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))))
+    };
+    if(sha) body.sha = sha;
+    
+    var r2 = await fetch(url, {
+      method: 'PUT',
+      headers: Object.assign({'Content-Type':'application/json'}, headers),
+      body: JSON.stringify(body)
+    });
+    
+    if(r2.ok){
+      showMsg('msg','✅ Order ' + d.id_order + ' tersimpan!','ok');
+      localStorage.setItem('gh_token', token);
+      localStorage.setItem('gh_repo', repo);
+    } else {
+      throw new Error('HTTP ' + r2.status);
+    }
+  }catch(e){
+    showMsg('msg','❌ Gagal: ' + e.message,'err');
+  }
+}
+
+// ===== AUTO LOAD =====
+generateID();
+hitungTotal();
+
+var savedToken = localStorage.getItem('gh_token');
+var savedRepo = localStorage.getItem('gh_repo');
+if(savedToken) document.getElementById('ghToken').value = savedToken;
+if(savedRepo) document.getElementById('ghRepo').value = savedRepo;
+</script>
+</body>
+</html>
